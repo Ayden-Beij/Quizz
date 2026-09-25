@@ -1,1 +1,344 @@
-IK BEN AYDEN EN IK ZIT
+```html
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>2FA Quiz</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .quiz {
+            background-color: #2c2c2c;
+            max-width: 600px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .vraag {
+            display: none;
+        }
+
+        .vraag.active {
+            display: block;
+        }
+
+        .antwoord {
+            display: block;
+            background-color: #444;
+            margin: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .antwoord:hover {
+            background-color: #555;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultaat {
+            display: none;
+        }
+
+        .goed {
+            color: lightgreen;
+        }
+
+        .fout {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz">
+
+    <h1>2FA Quiz</h1>
+
+    <!-- Vraag 1 -->
+    <div class="vraag active" id="vraag1">
+        <h2>Vraag 1</h2>
+        <p>Waar staat 2FA voor?</p>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag1" value="A">
+            A. Two Factor Authentication
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag1" value="B">
+            B. Two File Access
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag1" value="C">
+            C. Two Fast Accounts
+        </label>
+
+        <button onclick="opslaan(1)">Antwoord opslaan</button>
+    </div>
+
+
+    <!-- Vraag 2 -->
+    <div class="vraag" id="vraag2">
+        <h2>Vraag 2</h2>
+        <p>Wat doet 2FA?</p>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag2" value="A">
+            A. Het maakt je internet sneller
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag2" value="B">
+            B. Het voegt een extra beveiligingsstap toe
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag2" value="C">
+            C. Het verwijdert je wachtwoord
+        </label>
+
+        <button onclick="opslaan(2)">Antwoord opslaan</button>
+    </div>
+
+
+    <!-- Vraag 3 -->
+    <div class="vraag" id="vraag3">
+        <h2>Vraag 3</h2>
+        <p>Welke is een voorbeeld van 2FA?</p>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag3" value="A">
+            A. Alleen een gebruikersnaam
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag3" value="B">
+            B. Alleen een wachtwoord
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag3" value="C">
+            C. Wachtwoord + code uit een authenticator-app
+        </label>
+
+        <button onclick="opslaan(3)">Antwoord opslaan</button>
+    </div>
+
+
+    <!-- Vraag 4 -->
+    <div class="vraag" id="vraag4">
+        <h2>Vraag 4</h2>
+        <p>Waarom is 2FA handig?</p>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag4" value="A">
+            A. Het maakt accounts veiliger
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag4" value="B">
+            B. Het maakt je scherm groter
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag4" value="C">
+            C. Het maakt je computer sneller
+        </label>
+
+        <button onclick="opslaan(4)">Antwoord opslaan</button>
+    </div>
+
+
+    <!-- Vraag 5 -->
+    <div class="vraag" id="vraag5">
+        <h2>Vraag 5</h2>
+        <p>Wat heb je meestal naast je wachtwoord nodig bij 2FA?</p>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag5" value="A">
+            A. Een extra verificatie, zoals een code
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag5" value="B">
+            B. Een nieuwe computer
+        </label>
+
+        <label class="antwoord">
+            <input type="radio" name="vraag5" value="C">
+            C. Een printer
+        </label>
+
+        <button onclick="opslaan(5)">Antwoord opslaan</button>
+    </div>
+
+
+    <!-- Resultaat -->
+    <div id="resultaat">
+        <h2>Je resultaat</h2>
+
+        <p id="score"></p>
+
+        <h3>Je antwoorden:</h3>
+
+        <div id="overzicht"></div>
+
+        <button onclick="opnieuw()">Opnieuw proberen</button>
+    </div>
+
+</div>
+
+
+<script>
+
+    // Juiste antwoorden
+    const juisteAntwoorden = {
+        1: "A",
+        2: "B",
+        3: "C",
+        4: "A",
+        5: "A"
+    };
+
+    // Hier worden de antwoorden opgeslagen
+    let antwoorden = {};
+
+
+    function opslaan(vraagNummer) {
+
+        // Gekozen antwoord zoeken
+        const gekozen = document.querySelector(
+            'input[name="vraag' + vraagNummer + '"]:checked'
+        );
+
+        if (!gekozen) {
+            alert("Kies eerst een antwoord!");
+            return;
+        }
+
+        // Antwoord opslaan
+        antwoorden[vraagNummer] = gekozen.value;
+
+        // Naar volgende vraag
+        if (vraagNummer < 5) {
+
+            document.getElementById("vraag" + vraagNummer)
+                .classList.remove("active");
+
+            document.getElementById("vraag" + (vraagNummer + 1))
+                .classList.add("active");
+
+        } else {
+
+            // Laat resultaat zien
+            laatResultaatZien();
+        }
+    }
+
+
+    function laatResultaatZien() {
+
+        let score = 0;
+
+        let overzicht = "";
+
+        // Alle vragen controleren
+        for (let i = 1; i <= 5; i++) {
+
+            if (antwoorden[i] === juisteAntwoorden[i]) {
+
+                score++;
+
+                overzicht +=
+                    "<p class='goed'>Vraag " + i +
+                    ": Goed! Je antwoord: " +
+                    antwoorden[i] + "</p>";
+
+            } else {
+
+                overzicht +=
+                    "<p class='fout'>Vraag " + i +
+                    ": Fout. Je antwoord: " +
+                    antwoorden[i] +
+                    " | Juiste antwoord: " +
+                    juisteAntwoorden[i] +
+                    "</p>";
+            }
+        }
+
+        document.getElementById("score").innerHTML =
+            "Je hebt " + score + " van de 5 vragen goed!";
+
+        document.getElementById("overzicht").innerHTML =
+            overzicht;
+
+        // Laatste vraag verbergen
+        document.getElementById("vraag5")
+            .classList.remove("active");
+
+        // Resultaat tonen
+        document.getElementById("resultaat")
+            .style.display = "block";
+    }
+
+
+    function opnieuw() {
+
+        // Antwoorden wissen
+        antwoorden = {};
+
+        // Resultaat verbergen
+        document.getElementById("resultaat")
+            .style.display = "none";
+
+        // Alle vragen verbergen
+        for (let i = 1; i <= 5; i++) {
+
+            document.getElementById("vraag" + i)
+                .classList.remove("active");
+
+            document.querySelectorAll(
+                'input[name="vraag' + i + '"]'
+            ).forEach(input => {
+                input.checked = false;
+            });
+        }
+
+        // Begin bij vraag 1
+        document.getElementById("vraag1")
+            .classList.add("active");
+    }
+
+</script>
+
+</body>
+</html>
+```
